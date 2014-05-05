@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
 
-console.log(document.URL.substring(0, 23));
+//console.log(document.URL.substring(0, 23));
 
 if (document.URL.substring(0, 23) == "https://plus.googleapis" || document.URL.substring(0, 23) == "https://apis.google.com") {
     
@@ -15,7 +15,7 @@ if (document.URL.substring(0, 23) == "https://plus.googleapis" || document.URL.s
     setTimeout(doSomethingElse, 900);
     setTimeout(doSomethingElse, 1300);
     */
-
+    
     
     
     
@@ -24,15 +24,15 @@ if (document.URL.substring(0, 23) == "https://plus.googleapis" || document.URL.s
 function attemptClick(){
 
     try{
-    doSomething();
-    doSomething();
-    doSomethingElse();
-    doSomethingElse();    
+    sel = doSomething();
+    sel = doSomething();
+    doSomethingElse(sel);
+    doSomethingElse(sel);
     flag = checkStatus();
-    }catch(e){
+    }catch(e){console.log(e);
     };    
     
-    console.log(flag);
+    
     if(flag == true){
         clearInterval(tryTimer);
     }else{};
@@ -41,10 +41,12 @@ function attemptClick(){
 
 
 function checkStatus(){
-
-    var el = getElementByXpath('//*[@id="widget_bounds"]/div[2]/div[4]/div[1]/div/div[1]/div/div[2]/div[1]');
-    return (el.innerHTML == "Newest first");
-
+                                
+    var el = $('div').filter(function(){return $(this).text() === 'Newest first';});
+    if(($(el).css('display') == 'inline-block') && (typeof($(el).css('display')) !== 'undefined')){
+    return true;
+    }else{return false;
+    };
 };
 
 function getElementByXpath(path) {
@@ -58,30 +60,63 @@ function dispatchMouseEvent(target, var_args) {
         };
 
 
+function find1Elem(){
+
+    var el = $('div').filter(function(){return $(this).text() === 'Top comments';});
+    
+    if(el.length == 0){
+        return getElementByXpath('//*[@id="widget_bounds"]/div[2]/div[4]/div[1]/div/div[1]/div/div[2]/div[1]');
+    }else{
+        return el[0];
+    }
+    //*[@id=":2t"]/div
+
+};
+
+function find2Elem(el1){
+
+    
+    el = $(el1).parent().filter(function(){return $(this).text() === 'Newest first';});
+    /*
+    if(el.length == 0){
+        el = $('div').filter(function(){return $(this).text() === 'Newest first';});
+    }*/
+    
+    if(el.length == 0){
+        return getElementByXpath('/html/body/div[2]/div[2]');
+    }else{
+        return el[0];
+    }
+    //*[@id=":2t"]/div
+
+};
+
 
 
 function doSomething(){
+                                
+    var el = find1Elem()
     
-    var el = getElementByXpath('//*[@id="widget_bounds"]/div[2]/div[4]/div[1]/div/div[1]/div/div[2]/div[1]');
     
     
-    console.log(el);
 
 
         dispatchMouseEvent(el, 'mouseover', true, true);
         dispatchMouseEvent(el, 'mousedown', true, true);
         dispatchMouseEvent(el, 'click', true, true);
         dispatchMouseEvent(el, 'mouseup', true, true);
+        return el;
 };
 
-function doSomethingElse(){
+function doSomethingElse(el1){
 
-var el2 = getElementByXpath('/html/body/div[2]/div[2]');
+
+    var el2 = find2Elem(el1);
     
-    console.log(el2);
+   
 
 
-    dispatchMouseEvent(el2, 'mouseover', true, true);
+        dispatchMouseEvent(el2, 'mouseover', true, true);
         dispatchMouseEvent(el2, 'mousedown', true, true);
         dispatchMouseEvent(el2, 'click', true, true);
         dispatchMouseEvent(el2, 'mouseup', true, true);

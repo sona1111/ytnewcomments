@@ -15,7 +15,7 @@ if (document.URL.substring(0, 23) == "https://plus.googleapis" || document.URL.s
     setTimeout(doSomethingElse, 900);
     setTimeout(doSomethingElse, 1300);
     */
-
+    
     
     
     
@@ -24,12 +24,12 @@ if (document.URL.substring(0, 23) == "https://plus.googleapis" || document.URL.s
 function attemptClick(){
 
     try{
-    doSomething();
-    doSomething();
-    doSomethingElse();
-    doSomethingElse();    
+    sel = doSomething();
+    sel = doSomething();
+    doSomethingElse(sel);
+    doSomethingElse(sel);
     flag = checkStatus();
-    }catch(e){
+    }catch(e){console.log(e);
     };    
     
     
@@ -39,18 +39,21 @@ function attemptClick(){
 
 };
 
-
+//function to be called to see if the change was successful. Uses brute force search because speed is not apperant to user. 
 function checkStatus(){
-
-    var el = getElementByXpath('//*[@id="widget_bounds"]/div[2]/div[4]/div[1]/div/div[1]/div/div[2]/div[1]');
-    return (el.innerHTML == "Newest first");
-
+                                
+    var el = $('div').filter(function(){return $(this).text() === 'Newest first';});
+    if(($(el).css('display') == 'inline-block') && (typeof($(el).css('display')) !== 'undefined')){
+    return true;
+    }else{return false;
+    };
 };
 
 function getElementByXpath(path) {
     return document.evaluate(path, document, null, 9, null).singleNodeValue;
 };
 
+//actual mechanics of simulating the mouse click. 
 function dispatchMouseEvent(target, var_args) {
           var e = document.createEvent("MouseEvents");
           e.initEvent.apply(e, Array.prototype.slice.call(arguments, 1));
@@ -58,30 +61,70 @@ function dispatchMouseEvent(target, var_args) {
         };
 
 
+function find1Elem(){
+
+    //attempt to find by a brute force search
+    var el = $('div').filter(function(){return $(this).text() === 'Top comments';});
+    
+    //if that fails try the last known xpath
+    if(el.length == 0){
+        return getElementByXpath('//*[@id="widget_bounds"]/div[2]/div[4]/div[1]/div/div[1]/div/div[2]/div[1]');
+    }else{
+        return el[0];
+    }
+    
+
+};
+
+function find2Elem(el1){
+
+    //attempt to find by looking in the children of the last found element
+    el = $(el1).parent().filter(function(){return $(this).text() === 'Newest first';});
+    
+    //next, look by a brute force search
+    //disabled because it overrides the first method on the first couple of function calls
+    /*
+    if(el.length == 0){
+        el = $('div').filter(function(){return $(this).text() === 'Newest first';});
+    }*/
+    
+    //if all of that fails try the last xpath
+    if(el.length == 0){
+        return getElementByXpath('/html/body/div[2]/div[2]');
+    }else{
+        return el[0];
+    }
+    
+
+};
 
 
+//function to call the mouse click on the outer menu
 function doSomething(){
+                                
+    var el = find1Elem()
     
-    var el = getElementByXpath('//*[@id="widget_bounds"]/div[2]/div[4]/div[1]/div/div[1]/div/div[2]/div[1]');
     
     
-    //console.log(el);
 
 
         dispatchMouseEvent(el, 'mouseover', true, true);
         dispatchMouseEvent(el, 'mousedown', true, true);
         dispatchMouseEvent(el, 'click', true, true);
         dispatchMouseEvent(el, 'mouseup', true, true);
+        return el;
 };
 
-function doSomethingElse(){
+//then call the mouse click on the inner menu
+function doSomethingElse(el1){
 
-var el2 = getElementByXpath('/html/body/div[2]/div[2]');
+
+    var el2 = find2Elem(el1);
     
-    //console.log(el2);
+   
 
 
-    dispatchMouseEvent(el2, 'mouseover', true, true);
+        dispatchMouseEvent(el2, 'mouseover', true, true);
         dispatchMouseEvent(el2, 'mousedown', true, true);
         dispatchMouseEvent(el2, 'click', true, true);
         dispatchMouseEvent(el2, 'mouseup', true, true);

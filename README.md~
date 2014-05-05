@@ -9,11 +9,6 @@ Problems to fix:
 
 * clean up code, better function names, etc. 
 * Be able to turn off the extension by clicking on the icon.
-* automatically search for the correct element to click instead of using a predefined xpath.
-
-Update 5/5/14 
---------------
-
-Problem #3 was partially solved by using a search combined with an xpath. Limitations in speed make it diffucult to choose one over the other.  
+* automatically search for the correct element to click instead of using a predefined xpath. 
 
  
